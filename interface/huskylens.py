@@ -168,10 +168,9 @@ class HuskyLens:
 
     def get_blocks_by_id(self, id) -> list:
         """Get a list of blocks with a specific ID from the HuskyLens."""
-        logger.info('COMMAND_REQUEST_BY_ID %d', id)
-        # TODO: This is a hack, the HuskyLens should support this natively
-        blocks = self.get_blocks()
-        return [block for block in blocks if block.id == id]
+        logger.info('COMMAND_REQUEST_BLOCKS_BY_ID %d', id)
+        self._write_command(COMMAND_REQUEST_BLOCKS_BY_ID, id.to_bytes(2, byteorder='little'))
+        return self.handle_block_response()
 
     def get_arrows(self) -> list:
         """Get a list of arrows from the HuskyLens."""
@@ -188,7 +187,6 @@ class HuskyLens:
     def get_arrows_by_id(self, id) -> list:
         """Get a list of arrows with a specific ID from the HuskyLens."""
         logger.info('COMMAND_REQUEST_ARROWS_BY_ID %d', id)
-
         self._write_command(COMMAND_REQUEST_ARROWS_BY_ID, id.to_bytes(2, byteorder='little'))
         return self.handle_arrow_response()
 
