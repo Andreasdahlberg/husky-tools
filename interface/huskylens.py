@@ -7,7 +7,7 @@ import math
 import logging
 import serial
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
 
@@ -104,8 +104,12 @@ class Arrow:
 COMMAND_REQUEST_KNOCK = 0x2C
 COMMAND_REQUEST_ALGORITHM = 0x2D
 COMMAND_REQUEST_BLOCKS = 0x21
+COMMAND_REQUEST_ARROWS = 0x22
 COMMAND_REQUEST_BLOCKS_LEARNED = 0x24
+COMMAND_REQUEST_ARROWS_LEARNED = 0x25
 COMMAND_REQUEST_BY_ID = 0x26
+COMMAND_REQUEST_BLOCKS_BY_ID = 0x27
+COMMAND_REQUEST_ARROWS_BY_ID = 0x28
 COMMAND_REQUEST_LEARN = 0x36
 COMMAND_REQUEST_FORGET = 0x37
 
@@ -167,6 +171,25 @@ class HuskyLens:
         blocks = self.get_blocks()
         return [block for block in blocks if block.id == id]
 
+    def get_arrows(self) -> list:
+        """Get a list of arrows from the HuskyLens."""
+        logger.info('COMMAND_REQUEST_ARROWS')
+        self._write_command(COMMAND_REQUEST_ARROWS)
+        return self.handle_arrow_response()
+
+    def get_arrows_learned(self) -> list:
+        """Get a list of learned arrows from the HuskyLens."""
+        logger.info('COMMAND_REQUEST_ARROWS_LEARNED')
+        self._write_command(COMMAND_REQUEST_ARROWS_LEARNED)
+        return self.handle_arrow_response()
+
+    def get_arrows_by_id(self, id) -> list:
+        """Get a list of arrows with a specific ID from the HuskyLens."""
+        logger.info('COMMAND_REQUEST_ARROWS_BY_ID %d', id)
+
+        self._write_command(COMMAND_REQUEST_ARROWS_BY_ID, id.to_bytes(2, byteorder='little'))
+        return self.handle_arrow_response()
+
     def _write_command(self, cmd: int, data=[]) -> None:
         """Write a command to the HuskyLens."""
         command = self._COMMAND_HEADER_ADDRESS.copy()
@@ -221,6 +244,24 @@ class HuskyLens:
             blocks.append(Block(x, y, width, height, id))
 
         return blocks
+
+    def handle_arrow_response(self):
+        """Handle an arrow response from the HuskyLens."""
+        info_response = self._read_response()
+        number_of_arrows = int.from_bytes(info_response[5:6], byteorder='little', signed=False)
+
+        arrows = []
+        for i in range(0, number_of_arrows):
+            response = self._read_response()
+
+            x_tail = int.from_bytes(response[5:6], byteorder='little', signed=False)
+            y_tail = int.from_bytes(response[7:8], byteorder='little', signed=False)
+            x_head = int.from_bytes(response[9:10], byteorder='little', signed=False)
+            y_head = int.from_bytes(response[11:12], byteorder='little', signed=False)
+            id = int.from_bytes(response[13:14], byteorder='little', signed=False)
+            arrows.append(Arrow(x_tail, y_tail, x_head, y_head, id))
+
+        return arrows
 
 
 if __name__ == "__main__":
