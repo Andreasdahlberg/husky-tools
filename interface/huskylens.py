@@ -113,6 +113,7 @@ COMMAND_REQUEST_ARROWS_BY_ID = 0x28
 COMMAND_REQUEST_PHOTO = 0x30
 COMMAND_REQUEST_LEARN = 0x36
 COMMAND_REQUEST_FORGET = 0x37
+COMMAND_REQUEST_IS_PRO = 0x3B
 
 COMMAND_RETURN_INFO = 0x29
 COMMAND_RETURN_OK = 0x2E
@@ -197,6 +198,13 @@ class HuskyLens:
         self._write_command(COMMAND_REQUEST_PHOTO)
         response = self._read_response()
         return response[-2] == COMMAND_RETURN_OK
+
+    def is_pro(self) -> bool:
+        """Check if the HuskyLens is a pro version."""
+        logger.info('COMMAND_REQUEST_IS_PRO')
+        self._write_command(COMMAND_REQUEST_IS_PRO)
+        response = self._read_response()
+        return response[-2] == 0x01
 
     def _write_command(self, cmd: int, data=[]) -> None:
         """Write a command to the HuskyLens."""
