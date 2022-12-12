@@ -110,6 +110,7 @@ COMMAND_REQUEST_ARROWS_LEARNED = 0x25
 COMMAND_REQUEST_BY_ID = 0x26
 COMMAND_REQUEST_BLOCKS_BY_ID = 0x27
 COMMAND_REQUEST_ARROWS_BY_ID = 0x28
+COMMAND_REQUEST_PHOTO = 0x30
 COMMAND_REQUEST_LEARN = 0x36
 COMMAND_REQUEST_FORGET = 0x37
 
@@ -189,6 +190,13 @@ class HuskyLens:
 
         self._write_command(COMMAND_REQUEST_ARROWS_BY_ID, id.to_bytes(2, byteorder='little'))
         return self.handle_arrow_response()
+
+    def photo(self) -> None:
+        """Take a photo with the HuskyLens and save to the SD-card."""
+        logger.info('COMMAND_REQUEST_PHOTO')
+        self._write_command(COMMAND_REQUEST_PHOTO)
+        response = self._read_response()
+        return response[-2] == COMMAND_RETURN_OK
 
     def _write_command(self, cmd: int, data=[]) -> None:
         """Write a command to the HuskyLens."""
