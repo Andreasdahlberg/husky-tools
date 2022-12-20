@@ -112,6 +112,14 @@ class Arrow:
         return math.sqrt((self.x_head - self.x_tail) ** 2 + (self.y_head - self.y_tail) ** 2)
 
 
+class ChecksumMismatch(Exception):
+    pass
+
+
+class ResponseLengthError(Exception):
+    pass
+
+
 class HuskyLens:
     """Class for the HuskyLens object recognition module."""
     _COMMAND_HEADER_ADDRESS = [0x55, 0xAA, 0x11]
@@ -138,7 +146,10 @@ class HuskyLens:
         """Check if the HuskyLens is connected."""
         logger.info('COMMAND_REQUEST_KNOCK')
         self._write_command(self._COMMAND_REQUEST_KNOCK)
-        response = self._read_response()
+        try:
+            response = self._read_response()
+        except ResponseLengthError:
+            return False
         return self._is_response_ok(response)
 
     def set_algorithm(self, algorithm: int) -> bool:
@@ -230,16 +241,23 @@ class HuskyLens:
 
     def _read_response(self) -> bytearray:
         """Read a response from the HuskyLens."""
-        response = self._serial.read(5)
+        RESPONSE_HEADER_LENGTH = 5
+        response = self._serial.read(RESPONSE_HEADER_LENGTH)
+        if len(response) != RESPONSE_HEADER_LENGTH:
+            raise ResponseLengthError('Invalid response header length {} != {}'.format(
+                RESPONSE_HEADER_LENGTH, len(response)))
         length = int(response[-2])
         response += (self._serial.read(length + 1))
+        if len(response) != RESPONSE_HEADER_LENGTH + length + 1:
+            raise ResponseLengthError('Invalid response data length {} != {}'.format(
+                RESPONSE_HEADER_LENGTH + length + 1, len(response)))
 
         logger.debug('read: %s', ' '.join(hex(x) for x in response))
 
         expected_checksum = sum(response[:-1]) & 0xFF
         checksum = response[-1]
         if expected_checksum != checksum:
-            raise ValueError('Checksum mismatch {} != {}'.format(
+            raise ChecksumMismatch('Checksum mismatch {} != {}'.format(
                 expected_checksum, checksum))
         return response
 
@@ -291,5 +309,5 @@ class HuskyLens:
 
 
 if __name__ == "__main__":
-    with HuskyLens("/dev/ttyUSB1") as lens:
-        print("Connected:", lens.knock())
+    with HuskyLens("/dev/ttyUSB0") as lens:
+        print("HuskyLens connected:", lens.knock())
