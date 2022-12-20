@@ -11,6 +11,16 @@ logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
 
+class HuskyLensAlgorithm:
+    FACE_RECOGNITION = 0x00
+    OBJECT_TRACKING = 0x01
+    OBJECT_RECOGNITION = 0x02
+    LINE_TRACKING = 0x03
+    COLOR_RECOGNITION = 0x04
+    TAG_RECOGNITION = 0x05
+    OBJECT_CLASSIFICATION = 0x06
+
+
 class Block:
     """Class representing a block"""
 
@@ -101,27 +111,24 @@ class Arrow:
         return math.sqrt((self.x_head - self.x_tail) ** 2 + (self.y_head - self.y_tail) ** 2)
 
 
-COMMAND_REQUEST_KNOCK = 0x2C
-COMMAND_REQUEST_ALGORITHM = 0x2D
-COMMAND_REQUEST_BLOCKS = 0x21
-COMMAND_REQUEST_ARROWS = 0x22
-COMMAND_REQUEST_BLOCKS_LEARNED = 0x24
-COMMAND_REQUEST_ARROWS_LEARNED = 0x25
-COMMAND_REQUEST_BY_ID = 0x26
-COMMAND_REQUEST_BLOCKS_BY_ID = 0x27
-COMMAND_REQUEST_ARROWS_BY_ID = 0x28
-COMMAND_REQUEST_PHOTO = 0x30
-COMMAND_REQUEST_LEARN = 0x36
-COMMAND_REQUEST_FORGET = 0x37
-COMMAND_REQUEST_IS_PRO = 0x3B
-
-COMMAND_RETURN_INFO = 0x29
-COMMAND_RETURN_OK = 0x2E
-
-
 class HuskyLens:
     """Class for the HuskyLens object recognition module."""
     _COMMAND_HEADER_ADDRESS = [0x55, 0xAA, 0x11]
+    _COMMAND_REQUEST_KNOCK = 0x2C
+    _COMMAND_REQUEST_ALGORITHM = 0x2D
+    _COMMAND_REQUEST_BLOCKS = 0x21
+    _COMMAND_REQUEST_ARROWS = 0x22
+    _COMMAND_REQUEST_BLOCKS_LEARNED = 0x24
+    _COMMAND_REQUEST_ARROWS_LEARNED = 0x25
+    _COMMAND_REQUEST_BY_ID = 0x26
+    _COMMAND_REQUEST_BLOCKS_BY_ID = 0x27
+    _COMMAND_REQUEST_ARROWS_BY_ID = 0x28
+    _COMMAND_REQUEST_PHOTO = 0x30
+    _COMMAND_REQUEST_LEARN = 0x36
+    _COMMAND_REQUEST_FORGET = 0x37
+    _COMMAND_REQUEST_IS_PRO = 0x3B
+    _COMMAND_RETURN_INFO = 0x29
+    _COMMAND_RETURN_OK = 0x2E
 
     def __init__(self, port, baudrate=9600, timeout=0.5) -> None:
         self._serial = serial.Serial(port, baudrate=baudrate, timeout=timeout)
@@ -129,78 +136,78 @@ class HuskyLens:
     def knock(self) -> bool:
         """Check if the HuskyLens is connected."""
         logger.info('COMMAND_REQUEST_KNOCK')
-        self._write_command(COMMAND_REQUEST_KNOCK)
+        self._write_command(self._COMMAND_REQUEST_KNOCK)
         response = self._read_response()
-        return response[-2] == COMMAND_RETURN_OK
+        return response[-2] == self._COMMAND_RETURN_OK
 
     def set_algorithm(self, algorithm: int) -> None:
         """Set the algorithm used by the HuskyLens."""
         logger.info('COMMAND_REQUEST_ALGORITHM %d', algorithm)
-        self._write_command(COMMAND_REQUEST_ALGORITHM, algorithm.to_bytes(2, byteorder='little'))
+        self._write_command(self._COMMAND_REQUEST_ALGORITHM, algorithm.to_bytes(2, byteorder='little'))
         response = self._read_response()
-        return response[-2] == COMMAND_RETURN_OK
+        return response[-2] == self._COMMAND_RETURN_OK
 
     def learn(self, object_id) -> None:
         """Learn the current recognized object with the given ID."""
         logger.info('COMMAND_REQUEST_LEARN %d', object_id)
-        self._write_command(COMMAND_REQUEST_LEARN, object_id.to_bytes(2, byteorder='little'))
+        self._write_command(self._COMMAND_REQUEST_LEARN, object_id.to_bytes(2, byteorder='little'))
         response = self._read_response()
-        return response[-2] == COMMAND_RETURN_OK
+        return response[-2] == self._COMMAND_RETURN_OK
 
     def forget(self) -> None:
         """Forget learned objects for the current algorithm."""
         logger.info('COMMAND_REQUEST_FORGET')
-        self._write_command(COMMAND_REQUEST_FORGET)
+        self._write_command(self._COMMAND_REQUEST_FORGET)
         response = self._read_response()
-        return response[-2] == COMMAND_RETURN_OK
+        return response[-2] == self._COMMAND_RETURN_OK
 
     def get_blocks(self) -> list:
         """Get a list of blocks from the HuskyLens."""
         logger.info('COMMAND_REQUEST_BLOCKS')
-        self._write_command(COMMAND_REQUEST_BLOCKS)
+        self._write_command(self._COMMAND_REQUEST_BLOCKS)
         return self.handle_block_response()
 
     def get_blocks_learned(self) -> list:
         """Get a list of learned blocks from the HuskyLens."""
         logger.info('COMMAND_REQUEST_BLOCKS_LEARNED')
-        self._write_command(COMMAND_REQUEST_BLOCKS_LEARNED)
+        self._write_command(self._COMMAND_REQUEST_BLOCKS_LEARNED)
         return self.handle_block_response()
 
     def get_blocks_by_id(self, id) -> list:
         """Get a list of blocks with a specific ID from the HuskyLens."""
         logger.info('COMMAND_REQUEST_BLOCKS_BY_ID %d', id)
-        self._write_command(COMMAND_REQUEST_BLOCKS_BY_ID, id.to_bytes(2, byteorder='little'))
+        self._write_command(self._COMMAND_REQUEST_BLOCKS_BY_ID, id.to_bytes(2, byteorder='little'))
         return self.handle_block_response()
 
     def get_arrows(self) -> list:
         """Get a list of arrows from the HuskyLens."""
         logger.info('COMMAND_REQUEST_ARROWS')
-        self._write_command(COMMAND_REQUEST_ARROWS)
+        self._write_command(self._COMMAND_REQUEST_ARROWS)
         return self.handle_arrow_response()
 
     def get_arrows_learned(self) -> list:
         """Get a list of learned arrows from the HuskyLens."""
         logger.info('COMMAND_REQUEST_ARROWS_LEARNED')
-        self._write_command(COMMAND_REQUEST_ARROWS_LEARNED)
+        self._write_command(self._COMMAND_REQUEST_ARROWS_LEARNED)
         return self.handle_arrow_response()
 
     def get_arrows_by_id(self, id) -> list:
         """Get a list of arrows with a specific ID from the HuskyLens."""
         logger.info('COMMAND_REQUEST_ARROWS_BY_ID %d', id)
-        self._write_command(COMMAND_REQUEST_ARROWS_BY_ID, id.to_bytes(2, byteorder='little'))
+        self._write_command(self._COMMAND_REQUEST_ARROWS_BY_ID, id.to_bytes(2, byteorder='little'))
         return self.handle_arrow_response()
 
     def photo(self) -> None:
         """Take a photo with the HuskyLens and save to the SD-card."""
         logger.info('COMMAND_REQUEST_PHOTO')
-        self._write_command(COMMAND_REQUEST_PHOTO)
+        self._write_command(self._COMMAND_REQUEST_PHOTO)
         response = self._read_response()
-        return response[-2] == COMMAND_RETURN_OK
+        return response[-2] == self._COMMAND_RETURN_OK
 
     def is_pro(self) -> bool:
         """Check if the HuskyLens is a pro version."""
         logger.info('COMMAND_REQUEST_IS_PRO')
-        self._write_command(COMMAND_REQUEST_IS_PRO)
+        self._write_command(self._COMMAND_REQUEST_IS_PRO)
         response = self._read_response()
         return response[-2] == 0x01
 
