@@ -24,7 +24,7 @@ class HuskyLensAlgorithm:
 class Block:
     """Class representing a block"""
 
-    def __init__(self, x, y, width, height, id) -> None:
+    def __init__(self, x: int, y: int, width: int, height: int, id: int) -> None:
         self._x = x
         self._y = y
         self._width = width
@@ -65,7 +65,7 @@ class Block:
 class Arrow:
     """Class representing an arrow"""
 
-    def __init__(self, x_tail, y_tail, x_head, y_head, id) -> None:
+    def __init__(self, x_tail: int, y_tail: int, x_head: int, y_head: int, id: int) -> None:
         self._x_tail = x_tail
         self._y_tail = y_tail
         self._x_head = x_head
@@ -130,7 +130,7 @@ class HuskyLens:
     _COMMAND_RETURN_INFO = 0x29
     _COMMAND_RETURN_OK = 0x2E
 
-    def __init__(self, port, baudrate=9600, timeout=0.5) -> None:
+    def __init__(self, port: str, baudrate: int = 9600, timeout: float = 0.5) -> None:
         self._serial = serial.Serial(port, baudrate=baudrate, timeout=timeout)
 
     def knock(self) -> bool:
@@ -140,21 +140,21 @@ class HuskyLens:
         response = self._read_response()
         return response[-2] == self._COMMAND_RETURN_OK
 
-    def set_algorithm(self, algorithm: int) -> None:
+    def set_algorithm(self, algorithm: int) -> bool:
         """Set the algorithm used by the HuskyLens."""
         logger.info('COMMAND_REQUEST_ALGORITHM %d', algorithm)
         self._write_command(self._COMMAND_REQUEST_ALGORITHM, algorithm.to_bytes(2, byteorder='little'))
         response = self._read_response()
         return response[-2] == self._COMMAND_RETURN_OK
 
-    def learn(self, object_id) -> None:
+    def learn(self, object_id: int) -> bool:
         """Learn the current recognized object with the given ID."""
         logger.info('COMMAND_REQUEST_LEARN %d', object_id)
         self._write_command(self._COMMAND_REQUEST_LEARN, object_id.to_bytes(2, byteorder='little'))
         response = self._read_response()
         return response[-2] == self._COMMAND_RETURN_OK
 
-    def forget(self) -> None:
+    def forget(self) -> bool:
         """Forget learned objects for the current algorithm."""
         logger.info('COMMAND_REQUEST_FORGET')
         self._write_command(self._COMMAND_REQUEST_FORGET)
@@ -173,7 +173,7 @@ class HuskyLens:
         self._write_command(self._COMMAND_REQUEST_BLOCKS_LEARNED)
         return self.handle_block_response()
 
-    def get_blocks_by_id(self, id) -> list:
+    def get_blocks_by_id(self, id: int) -> list:
         """Get a list of blocks with a specific ID from the HuskyLens."""
         logger.info('COMMAND_REQUEST_BLOCKS_BY_ID %d', id)
         self._write_command(self._COMMAND_REQUEST_BLOCKS_BY_ID, id.to_bytes(2, byteorder='little'))
@@ -191,13 +191,13 @@ class HuskyLens:
         self._write_command(self._COMMAND_REQUEST_ARROWS_LEARNED)
         return self.handle_arrow_response()
 
-    def get_arrows_by_id(self, id) -> list:
+    def get_arrows_by_id(self, id: int) -> list:
         """Get a list of arrows with a specific ID from the HuskyLens."""
         logger.info('COMMAND_REQUEST_ARROWS_BY_ID %d', id)
         self._write_command(self._COMMAND_REQUEST_ARROWS_BY_ID, id.to_bytes(2, byteorder='little'))
         return self.handle_arrow_response()
 
-    def photo(self) -> None:
+    def photo(self) -> bool:
         """Take a photo with the HuskyLens and save to the SD-card."""
         logger.info('COMMAND_REQUEST_PHOTO')
         self._write_command(self._COMMAND_REQUEST_PHOTO)
@@ -227,7 +227,7 @@ class HuskyLens:
         self._serial.flushInput()
         self._serial.write(bytes(command))
 
-    def _read_response(self):
+    def _read_response(self) -> bytearray:
         """Read a response from the HuskyLens."""
         response = self._serial.read(5)
         length = int(response[-2])
@@ -248,7 +248,7 @@ class HuskyLens:
     def __exit__(self, *args):
         self._serial.close()
 
-    def handle_block_response(self):
+    def handle_block_response(self) -> list:
         """Handle a block response from the HuskyLens."""
         info_response = self._read_response()
         number_of_blocks = int.from_bytes(info_response[5:6], byteorder='little', signed=False)
@@ -266,7 +266,7 @@ class HuskyLens:
 
         return blocks
 
-    def handle_arrow_response(self):
+    def handle_arrow_response(self) -> list:
         """Handle an arrow response from the HuskyLens."""
         info_response = self._read_response()
         number_of_arrows = int.from_bytes(info_response[5:6], byteorder='little', signed=False)
