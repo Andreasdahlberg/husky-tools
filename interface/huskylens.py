@@ -12,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 class HuskyLensAlgorithm:
+    """Class representing the algorithms available on the HuskyLens."""
     FACE_RECOGNITION = 0x00
     OBJECT_TRACKING = 0x01
     OBJECT_RECOGNITION = 0x02
@@ -254,7 +255,7 @@ class HuskyLens:
         number_of_blocks = int.from_bytes(info_response[5:6], byteorder='little', signed=False)
 
         blocks = []
-        for i in range(0, number_of_blocks):
+        for _ in range(0, number_of_blocks):
             response = self._read_response()
 
             x = int.from_bytes(response[5:6], byteorder='little', signed=False)
@@ -272,7 +273,7 @@ class HuskyLens:
         number_of_arrows = int.from_bytes(info_response[5:6], byteorder='little', signed=False)
 
         arrows = []
-        for i in range(0, number_of_arrows):
+        for _ in range(0, number_of_arrows):
             response = self._read_response()
 
             x_tail = int.from_bytes(response[5:6], byteorder='little', signed=False)
