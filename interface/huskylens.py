@@ -139,28 +139,28 @@ class HuskyLens:
         logger.info('COMMAND_REQUEST_KNOCK')
         self._write_command(self._COMMAND_REQUEST_KNOCK)
         response = self._read_response()
-        return response[-2] == self._COMMAND_RETURN_OK
+        return self._is_response_ok(response)
 
     def set_algorithm(self, algorithm: int) -> bool:
         """Set the algorithm used by the HuskyLens."""
         logger.info('COMMAND_REQUEST_ALGORITHM %d', algorithm)
         self._write_command(self._COMMAND_REQUEST_ALGORITHM, algorithm.to_bytes(2, byteorder='little'))
         response = self._read_response()
-        return response[-2] == self._COMMAND_RETURN_OK
+        return self._is_response_ok(response)
 
     def learn(self, object_id: int) -> bool:
         """Learn the current recognized object with the given ID."""
         logger.info('COMMAND_REQUEST_LEARN %d', object_id)
         self._write_command(self._COMMAND_REQUEST_LEARN, object_id.to_bytes(2, byteorder='little'))
         response = self._read_response()
-        return response[-2] == self._COMMAND_RETURN_OK
+        return self._is_response_ok(response)
 
     def forget(self) -> bool:
         """Forget learned objects for the current algorithm."""
         logger.info('COMMAND_REQUEST_FORGET')
         self._write_command(self._COMMAND_REQUEST_FORGET)
         response = self._read_response()
-        return response[-2] == self._COMMAND_RETURN_OK
+        return self._is_response_ok(response)
 
     def get_blocks(self) -> list:
         """Get a list of blocks from the HuskyLens."""
@@ -203,7 +203,7 @@ class HuskyLens:
         logger.info('COMMAND_REQUEST_PHOTO')
         self._write_command(self._COMMAND_REQUEST_PHOTO)
         response = self._read_response()
-        return response[-2] == self._COMMAND_RETURN_OK
+        return self._is_response_ok(response)
 
     def is_pro(self) -> bool:
         """Check if the HuskyLens is a pro version."""
@@ -242,6 +242,10 @@ class HuskyLens:
             raise ValueError('Checksum mismatch {} != {}'.format(
                 expected_checksum, checksum))
         return response
+
+    def _is_response_ok(self, response: bytearray) -> bool:
+        """Check if the response is OK."""
+        return response[-2] == self._COMMAND_RETURN_OK
 
     def __enter__(self):
         return self
@@ -287,5 +291,5 @@ class HuskyLens:
 
 
 if __name__ == "__main__":
-    with HuskyLens("/dev/ttyUSB0") as lens:
+    with HuskyLens("/dev/ttyUSB1") as lens:
         print("Connected:", lens.knock())
