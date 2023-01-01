@@ -11,7 +11,7 @@ logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger(__name__)
 
 
-class HuskyLensAlgorithm:
+class RecognitionAlgorithm:
     """Class representing the algorithms available on the HuskyLens."""
     FACE_RECOGNITION = 0x00
     OBJECT_TRACKING = 0x01
@@ -120,7 +120,7 @@ class ResponseLengthError(Exception):
     pass
 
 
-class HuskyLens:
+class Interface:
     """Class for the HuskyLens object recognition module."""
     _COMMAND_HEADER_ADDRESS = [0x55, 0xAA, 0x11]
     _COMMAND_REQUEST_KNOCK = 0x2C
@@ -306,8 +306,3 @@ class HuskyLens:
             arrows.append(Arrow(x_tail, y_tail, x_head, y_head, id))
 
         return arrows
-
-
-if __name__ == "__main__":
-    with HuskyLens("/dev/ttyUSB0") as lens:
-        print("HuskyLens connected:", lens.knock())

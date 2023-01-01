@@ -24,7 +24,9 @@ pip install .
 ## Usage
 
 ```python
-with HuskyLens("/dev/ttyUSB0") as lens:
+from huskytools import huskylens
+
+with huskylens.Interface("/dev/ttyUSB0") as lens:
     if lens.knock():
         print("HuskyLens connected")
         for block in lens.get_blocks_learned():
