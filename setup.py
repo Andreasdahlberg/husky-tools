@@ -1,8 +1,17 @@
 from setuptools import setup, find_packages
+from pathlib import Path
+
+
+def get_long_description():
+    this_directory = Path(__file__).parent
+    return (this_directory / "README.md").read_text()
+
 
 setup(name='huskytools',
       version='0.1.0',
       description='Tools for interacting with the HuskyLens AI camera',
+      long_description=get_long_description(),
+      long_description_content_type='text/markdown',
       license='MIT',
       url='https://github.com/Andreasdahlberg/husky-tools',
       author='Andreas Dahlberg',
