@@ -23,8 +23,8 @@ setup(name='huskytools',
       ],
       keywords='huskylens face-recognition camera',
       packages=find_packages(),
-      python_requires='>=3.4',
-      install_requires=['pyserial>=3'],
+      python_requires='>=3.8',
+      install_requires=['pyserial>=3.4'],
       project_urls={
         'Bug Reports': 'https://github.com/Andreasdahlberg/husky-tools/issues',
         'Source': 'https://github.com/Andreasdahlberg/husky-tools/'
