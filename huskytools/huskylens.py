@@ -177,37 +177,37 @@ class Interface:
         """Get a list of blocks from the HuskyLens."""
         logger.info('COMMAND_REQUEST_BLOCKS')
         self._write_command(self._COMMAND_REQUEST_BLOCKS)
-        return self.handle_block_response()
+        return self._handle_block_response()
 
     def get_blocks_learned(self) -> list:
         """Get a list of learned blocks from the HuskyLens."""
         logger.info('COMMAND_REQUEST_BLOCKS_LEARNED')
         self._write_command(self._COMMAND_REQUEST_BLOCKS_LEARNED)
-        return self.handle_block_response()
+        return self._handle_block_response()
 
     def get_blocks_by_id(self, id: int) -> list:
         """Get a list of blocks with a specific ID from the HuskyLens."""
         logger.info('COMMAND_REQUEST_BLOCKS_BY_ID %d', id)
         self._write_command(self._COMMAND_REQUEST_BLOCKS_BY_ID, id.to_bytes(2, byteorder='little'))
-        return self.handle_block_response()
+        return self._handle_block_response()
 
     def get_arrows(self) -> list:
         """Get a list of arrows from the HuskyLens."""
         logger.info('COMMAND_REQUEST_ARROWS')
         self._write_command(self._COMMAND_REQUEST_ARROWS)
-        return self.handle_arrow_response()
+        return self._handle_arrow_response()
 
     def get_arrows_learned(self) -> list:
         """Get a list of learned arrows from the HuskyLens."""
         logger.info('COMMAND_REQUEST_ARROWS_LEARNED')
         self._write_command(self._COMMAND_REQUEST_ARROWS_LEARNED)
-        return self.handle_arrow_response()
+        return self._handle_arrow_response()
 
     def get_arrows_by_id(self, id: int) -> list:
         """Get a list of arrows with a specific ID from the HuskyLens."""
         logger.info('COMMAND_REQUEST_ARROWS_BY_ID %d', id)
         self._write_command(self._COMMAND_REQUEST_ARROWS_BY_ID, id.to_bytes(2, byteorder='little'))
-        return self.handle_arrow_response()
+        return self._handle_arrow_response()
 
     def photo(self) -> bool:
         """Take a photo with the HuskyLens and save to the SD-card."""
@@ -271,7 +271,7 @@ class Interface:
     def __exit__(self, *args):
         self._serial.close()
 
-    def handle_block_response(self) -> list:
+    def _handle_block_response(self) -> list:
         """Handle a block response from the HuskyLens."""
         info_response = self._read_response()
         number_of_blocks = int.from_bytes(info_response[5:6], byteorder='little', signed=False)
@@ -289,7 +289,7 @@ class Interface:
 
         return blocks
 
-    def handle_arrow_response(self) -> list:
+    def _handle_arrow_response(self) -> list:
         """Handle an arrow response from the HuskyLens."""
         info_response = self._read_response()
         number_of_arrows = int.from_bytes(info_response[5:6], byteorder='little', signed=False)
