@@ -133,6 +133,8 @@ class Interface:
     _COMMAND_REQUEST_BLOCKS_BY_ID = 0x27
     _COMMAND_REQUEST_ARROWS_BY_ID = 0x28
     _COMMAND_REQUEST_PHOTO = 0x30
+    _COMMAND_REQUEST_SEND_KNOWLEDGES = 0x32
+    _COMMAND_REQUEST_RECEIVE_KNOWLEDGES = 0x33
     _COMMAND_REQUEST_LEARN = 0x36
     _COMMAND_REQUEST_FORGET = 0x37
     _COMMAND_REQUEST_SAVE_SCREENSHOT = 0x39
@@ -224,6 +226,20 @@ class Interface:
         """
         logger.info('COMMAND_REQUEST_SAVE_SCREENSHOT')
         self._write_command(self._COMMAND_REQUEST_SAVE_SCREENSHOT)
+        response = self._read_response()
+        return self._is_response_ok(response)
+
+    def save_model(self, file_number):
+        """Save the current algorithms model to the SD-card."""
+        logger.info('COMMAND_REQUEST_SEND_KNOWLEDGES')
+        self._write_command(self._COMMAND_REQUEST_SEND_KNOWLEDGES, file_number.to_bytes(2, byteorder='little'))
+        response = self._read_response()
+        return self._is_response_ok(response)
+
+    def load_model(self, file_number):
+        """Load a model from the SD-card."""
+        logger.info('COMMAND_REQUEST_RECEIVE_KNOWLEDGES')
+        self._write_command(self._COMMAND_REQUEST_RECEIVE_KNOWLEDGES, file_number.to_bytes(2, byteorder='little'))
         response = self._read_response()
         return self._is_response_ok(response)
 
