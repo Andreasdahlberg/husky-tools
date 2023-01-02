@@ -142,7 +142,7 @@ class Interface:
     _COMMAND_RETURN_INFO = 0x29
     _COMMAND_RETURN_OK = 0x2E
 
-    def __init__(self, port: str, baudrate: int = 9600, timeout: float = 0.5) -> None:
+    def __init__(self, port: str, baudrate: int = 9600, timeout: float = 1.0) -> None:
         self._serial = serial.Serial(port, baudrate=baudrate, timeout=timeout)
 
     def knock(self) -> bool:
