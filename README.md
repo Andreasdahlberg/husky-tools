@@ -1,3 +1,5 @@
+[![Python package](https://github.com/Andreasdahlberg/husky-tools/actions/workflows/python-package.yml/badge.svg)](https://github.com/Andreasdahlberg/husky-tools/actions/workflows/python-package.yml)
+
 # huskytools
 huskytools provides simple and easy-to-use tools for interacting with the HuskyLens AI camera.
 
