@@ -311,8 +311,8 @@ class Interface:
             y = int.from_bytes(response[7:8], byteorder='little', signed=False)
             width = int.from_bytes(response[9:10], byteorder='little', signed=False)
             height = int.from_bytes(response[11:12], byteorder='little', signed=False)
-            id = int.from_bytes(response[13:14], byteorder='little', signed=False)
-            blocks.append(Block(x, y, width, height, id))
+            block_id = int.from_bytes(response[13:14], byteorder='little', signed=False)
+            blocks.append(Block(x, y, width, height, block_id))
 
         return blocks
 
@@ -329,7 +329,7 @@ class Interface:
             y_tail = int.from_bytes(response[7:8], byteorder='little', signed=False)
             x_head = int.from_bytes(response[9:10], byteorder='little', signed=False)
             y_head = int.from_bytes(response[11:12], byteorder='little', signed=False)
-            id = int.from_bytes(response[13:14], byteorder='little', signed=False)
-            arrows.append(Arrow(x_tail, y_tail, x_head, y_head, id))
+            arrow_id = int.from_bytes(response[13:14], byteorder='little', signed=False)
+            arrows.append(Arrow(x_tail, y_tail, x_head, y_head, arrow_id))
 
         return arrows
