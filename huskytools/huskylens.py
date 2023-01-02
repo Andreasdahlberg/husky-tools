@@ -135,6 +135,7 @@ class Interface:
     _COMMAND_REQUEST_PHOTO = 0x30
     _COMMAND_REQUEST_LEARN = 0x36
     _COMMAND_REQUEST_FORGET = 0x37
+    _COMMAND_REQUEST_SAVE_SCREENSHOT = 0x39
     _COMMAND_REQUEST_IS_PRO = 0x3B
     _COMMAND_RETURN_INFO = 0x29
     _COMMAND_RETURN_OK = 0x2E
@@ -213,6 +214,16 @@ class Interface:
         """Take a photo with the HuskyLens and save to the SD-card."""
         logger.info('COMMAND_REQUEST_PHOTO')
         self._write_command(self._COMMAND_REQUEST_PHOTO)
+        response = self._read_response()
+        return self._is_response_ok(response)
+
+    def screenshot(self) -> bool:
+        """Save a screenshot of the current UI to the SD-card.
+
+        Note that the function will return True even if no SD-card is inserted.
+        """
+        logger.info('COMMAND_REQUEST_SAVE_SCREENSHOT')
+        self._write_command(self._COMMAND_REQUEST_SAVE_SCREENSHOT)
         response = self._read_response()
         return self._is_response_ok(response)
 
