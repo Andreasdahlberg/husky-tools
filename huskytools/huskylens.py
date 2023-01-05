@@ -132,6 +132,7 @@ class Interface:
     _COMMAND_REQUEST_BY_ID = 0x26
     _COMMAND_REQUEST_BLOCKS_BY_ID = 0x27
     _COMMAND_REQUEST_ARROWS_BY_ID = 0x28
+    _COMMAND_REQUEST_CUSTOM_NAMES = 0x2F
     _COMMAND_REQUEST_PHOTO = 0x30
     _COMMAND_REQUEST_SEND_KNOWLEDGES = 0x32
     _COMMAND_REQUEST_RECEIVE_KNOWLEDGES = 0x33
@@ -228,6 +229,20 @@ class Interface:
         """
         logger.info('COMMAND_REQUEST_SAVE_SCREENSHOT')
         self._write_command(self._COMMAND_REQUEST_SAVE_SCREENSHOT)
+        response = self._read_response()
+        return self._is_response_ok(response)
+
+    def set_name(self, name: str, object_id: int):
+        """Set a custom name for the object with given ID."""
+        logger.info('COMMAND_REQUEST_CUSTOM_NAMES')
+
+        data = bytearray()
+        data.append(object_id)
+        data.append(len(name) + 1)  # Add one, for NULL, according to the protocol specification.
+        data.extend(name.encode('ascii', 'replace'))
+        data.append(0)
+
+        self._write_command(self._COMMAND_REQUEST_CUSTOM_NAMES, data)
         response = self._read_response()
         return self._is_response_ok(response)
 
