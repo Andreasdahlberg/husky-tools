@@ -7,7 +7,7 @@ import math
 import logging
 import serial
 
-logging.basicConfig(level=logging.WARNING)
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
@@ -135,6 +135,8 @@ class Interface:
     _COMMAND_REQUEST_PHOTO = 0x30
     _COMMAND_REQUEST_SEND_KNOWLEDGES = 0x32
     _COMMAND_REQUEST_RECEIVE_KNOWLEDGES = 0x33
+    _COMMAND_REQUEST_CUSTOM_TEXT = 0x34
+    _COMMAND_REQUEST_CLEAR_TEXT = 0x35
     _COMMAND_REQUEST_LEARN = 0x36
     _COMMAND_REQUEST_FORGET = 0x37
     _COMMAND_REQUEST_SAVE_SCREENSHOT = 0x39
@@ -226,6 +228,41 @@ class Interface:
         """
         logger.info('COMMAND_REQUEST_SAVE_SCREENSHOT')
         self._write_command(self._COMMAND_REQUEST_SAVE_SCREENSHOT)
+        response = self._read_response()
+        return self._is_response_ok(response)
+
+    def set_text(self, text: str, x: int, y: int) -> bool:
+        """Set a custom text on the HuskyLens display."""
+        logger.info('COMMAND_REQUEST_CUSTOM_TEXT')
+
+        # Make sure that the text position is on the screen.
+        if x > 320 or y > 240:
+            raise ValueError('Invalid text position')
+
+        data = bytearray()
+        data.append(len(text))
+
+        x_flag = 0
+        if x >= 0xFF:
+            x_flag = 0xFF
+        data.append(x_flag)
+
+        x_value = x
+        if x_flag != 0:
+            x_value = x % 0xFF
+        data.append(x_value)
+
+        data.append(y)
+        data.extend(text.encode('ascii', 'replace'))
+
+        self._write_command(self._COMMAND_REQUEST_CUSTOM_TEXT, data)
+        response = self._read_response()
+        return self._is_response_ok(response)
+
+    def clear_text(self) -> bool:
+        """Clear all custom texts on the HuskyLens display."""
+        logger.info('COMMAND_REQUEST_CLEAR_TEXT')
+        self._write_command(self._COMMAND_REQUEST_CLEAR_TEXT)
         response = self._read_response()
         return self._is_response_ok(response)
 
