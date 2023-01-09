@@ -8,7 +8,7 @@ def get_long_description():
 
 
 setup(name='huskytools',
-      version='0.2.0',
+      version='0.2.1',
       description='Tools for interacting with the HuskyLens AI camera',
       long_description=get_long_description(),
       long_description_content_type='text/markdown',
