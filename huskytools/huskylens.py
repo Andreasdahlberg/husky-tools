@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*
 
-"""Module implementing a low level API for the Huskylens camera.
-
-"""
+"""Module implementing a low level API for the Huskylens camera."""
 
 import math
 import logging
+from typing import List
 import serial
 
 logging.basicConfig(level=logging.WARNING)
@@ -240,7 +239,7 @@ class Interface:
         response = self._read_response()
         return self._is_response_ok(response)
 
-    def get_blocks(self) -> list(Block):
+    def get_blocks(self) -> List[Block]:
         """Get a list of blocks from the HuskyLens.
 
         Returns:
@@ -264,7 +263,7 @@ class Interface:
         self._write_command(self._COMMAND_REQUEST_BLOCKS_LEARNED)
         return self._handle_block_response()
 
-    def get_blocks_by_id(self, id: int) -> list(Block):
+    def get_blocks_by_id(self, id: int) -> List[Block]:
         """Get a list of blocks with a specific ID from the HuskyLens.
 
         Args:
@@ -277,7 +276,7 @@ class Interface:
         self._write_command(self._COMMAND_REQUEST_BLOCKS_BY_ID, id.to_bytes(2, byteorder='little'))
         return self._handle_block_response()
 
-    def get_arrows(self) -> list(Arrow):
+    def get_arrows(self) -> List[Arrow]:
         """Get a list of arrows from the HuskyLens.
 
         Returns:
@@ -287,7 +286,7 @@ class Interface:
         self._write_command(self._COMMAND_REQUEST_ARROWS)
         return self._handle_arrow_response()
 
-    def get_arrows_learned(self) -> list(Arrow):
+    def get_arrows_learned(self) -> List[Arrow]:
         """Get a list of learned arrows from the HuskyLens.
 
         Returns:
@@ -297,7 +296,7 @@ class Interface:
         self._write_command(self._COMMAND_REQUEST_ARROWS_LEARNED)
         return self._handle_arrow_response()
 
-    def get_arrows_by_id(self, id: int) -> list(Arrow):
+    def get_arrows_by_id(self, id: int) -> List[Arrow]:
         """Get a list of arrows with a specific ID from the HuskyLens.
 
         Args:
@@ -515,7 +514,7 @@ class Interface:
     def __exit__(self, *args):
         self._serial.close()
 
-    def _handle_block_response(self) -> list(Block):
+    def _handle_block_response(self) -> List[Block]:
         """Handle a block response from the HuskyLens."""
         info_response = self._read_response()
         number_of_blocks = int.from_bytes(info_response[5:6], byteorder='little', signed=False)
@@ -533,7 +532,7 @@ class Interface:
 
         return blocks
 
-    def _handle_arrow_response(self) -> list(Arrow):
+    def _handle_arrow_response(self) -> List[Arrow]:
         """Handle an arrow response from the HuskyLens."""
         info_response = self._read_response()
         number_of_arrows = int.from_bytes(info_response[5:6], byteorder='little', signed=False)
