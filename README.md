@@ -1,5 +1,6 @@
 [![Python package](https://github.com/Andreasdahlberg/husky-tools/actions/workflows/python-package.yml/badge.svg)](https://github.com/Andreasdahlberg/husky-tools/actions/workflows/python-package.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Andreasdahlberg_husky-tools&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=Andreasdahlberg_husky-tools)
+[![Documentation Status](https://readthedocs.org/projects/huskytools/badge/?version=latest)](https://huskytools.readthedocs.io/en/latest/?badge=latest)
 
 # About
 huskytools provides tools for interacting with the [HuskyLens AI camera](https://wiki.dfrobot.com/HUSKYLENS_V1.0_SKU_SEN0305_SEN0336).
