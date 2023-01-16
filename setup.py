@@ -27,6 +27,7 @@ setup(name='huskytools',
       install_requires=['pyserial>=3.4'],
       project_urls={
         'Bug Reports': 'https://github.com/Andreasdahlberg/husky-tools/issues',
-        'Source': 'https://github.com/Andreasdahlberg/husky-tools/'
+        'Source': 'https://github.com/Andreasdahlberg/husky-tools/',
+        'Documentation': 'https://huskytools.readthedocs.io'
       }
       )
